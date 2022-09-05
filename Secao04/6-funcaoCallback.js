@@ -1,15 +1,51 @@
-function f1() {
-    console.log('f1');
+function rand(min = 1000, max = 3000) {
+    const num = Math.random() * (max - min) + min;
+    return Math.floor(num);
 }
 
-function f2() {
-    console.log('f2');
+function f1(callback) {
+    setTimeout(function () {
+        console.log('f1');
+        if (callback) callback();
+    }, rand());
 }
 
-function f3() {
-    console.log('f3');
+function f2(callback) {
+    setTimeout(function () {
+        console.log('f2');
+        if (callback) callback();
+    }, rand());
 }
 
-f1();
-f2();
-f3();
+function f3(callback) {
+    setTimeout(function () {
+        console.log('f3');
+        if (callback) callback();
+    }, rand());
+}
+
+// Chama uma função quando a outra terminar.
+f1(f1Callback);
+
+function f1Callback() {
+    f2(f2Callback);
+}
+
+function f2Callback() {
+    f3(f3Callback);
+}
+
+function f3Callback() {
+    console.log('Olá Mundo!!!')
+}
+
+// È igual uma caixa de surpresa descobri uma aparece outra
+/**
+ * f1(function() {
+        f2(function() {
+            f3(function() {
+                console.log('Olá Mundo!!!')
+            });
+        });
+    });
+ */
