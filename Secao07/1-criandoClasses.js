@@ -15,9 +15,9 @@ class Pessoa { // construtor
 const p1 = new Pessoa('Luiz', 'Miranda');
 console.log(p1);
 
+
+
 // FUNÇÃO CONSTRUTORA
-
-
 
 function Pessoa2 (nome, sobrenome) { // Construtor
     this.nome = nome;
