@@ -13,15 +13,16 @@ mongoose.connect(process.env.CONNECTIONSTRING)
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
-
 const routes = require('./routes');
 const path = require('path');
-const {middlewareGlobal} = require('./src/middlewares/middlewares');
+const helmet = require('helmet');
+const csrf = require('csurf');
+const {middlewareGlobal, checkCsrfError, crsfMiddleware} = require('./src/middlewares/middlewares');
 
 
 //PADRÃO FULL MVC
+app.use(helmet());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(path.resolve(__dirname, 'public')));
 
 const sessionOptions = session({
@@ -40,8 +41,11 @@ app.use(flash());
 app.set('views', path.resolve(__dirname, 'src', 'views'));
 app.set('views engine', 'ejs');
 
+app.use(csrf());
 //Nosso próprios middlewares
 app.use(middlewareGlobal);
+app.use(checkCsrfError);
+app.use(crsfMiddleware);
 app.use(routes);
 
 app.on('Pronto', () => {
