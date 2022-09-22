@@ -16,6 +16,24 @@ class Login {
     this.user = null;
   }
 
+  async login() {
+    this.valida();
+    if(this.errors.length > 0) return;
+    this.user = await LoginModel.findOne({email: this.body.email}); 
+
+    if(!this.user) {
+      this.errors.push('Usuário não existe.');
+      return;
+    }
+
+    if(!bcryptjs.compareSync(this.body.password, this.user.password)) {
+      this.errors.push('Senha inválida');
+      this.user = null;
+      return;
+    }
+
+  }
+
   async register() {
     this.valida();
     if (this.errors.length > 0) return; //checkando
@@ -24,21 +42,20 @@ class Login {
 
     if (this.errors.length > 0) return; // não deixando o email se repetir no banco de dados
 
-    const salt = bcryptjs.genSaltSync(); //gerando uma senha e registrar usuario
+    const salt = bcryptjs.genSaltSync(); //gerando uma senha e registrar usuario "criptografada"
     this.body.password = bcryptjs.hashSync(this.body.password, salt);
     
-    try {
-      this.user = await LoginModel.create(this.body);
-    } catch (error) {
-      console.log(error)
-    }
+    this.user = await LoginModel.create(this.body); // criando a conta
   }
 
+// metodo para ver se ja existe o email
   async userExists() {
-    const user = await LoginModel.findOne({email: this.body.email}); // metodo para ver se ja existe o email
-    if(user) this.errors.push('Usuário já existe.');
+    this.user = await LoginModel.findOne({email: this.body.email}); 
+    if(this.user) this.errors.push('Usuário já existe.');
+
   }
 
+// validando os criterios de senha e email
   valida() {
     this.cleanUp();
     // Validação o email e senha 
@@ -48,14 +65,16 @@ class Login {
     }
   }
 
-  cleanUp() {  // limpar os objetos
+// limpar os objetos
+  cleanUp() {  
     for (const key in this.body) {
       if (typeof this.body[key] !== 'string') {
         this.body[key] = '';
       }
     }
 
-    this.body = { // garantindo se os campos vai ter somente o campo que desejo
+// garantindo se os campos vai ter somente o campo que desejo
+    this.body = { 
       email: this.body.email,
       password: this.body.password
     };
