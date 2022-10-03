@@ -13,5 +13,4 @@ class HomeController {
     res.json(novoAluno);
   }
 }
-
 export default new HomeController();
