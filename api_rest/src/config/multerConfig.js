@@ -15,7 +15,7 @@ export default {
   // armazenado foto em um certo arquivo
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, resolve(__dirname, '..', '..', 'uploads'));
+      cb(null, resolve(__dirname, '..', '..', 'uploads', 'images'));
     },
 
     // salvando nome com nomes padrao na data
